@@ -11,8 +11,6 @@
 > * 画图使用了d3.js
 > * 报表使用了c3.js
 
-------
-
 ## 如何安装
 > * 下载项目: git clone http://10.0.0.23/root/javaweb-demo.git
 > * maven安装分词器ik-analyzer，下载地址：https://github.com/leiguorui/ik-analyzer
