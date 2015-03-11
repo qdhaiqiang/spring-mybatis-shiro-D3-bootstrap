@@ -1,0 +1,14 @@
+# Project ignore files
+/.settings
+/.classpath
+/.project
+/.tomcatplugin
+/target
+/work
+/.tomcatplugin
+/src/main/webapp/.#webclasspath
+
+.idea/
+*.ipr
+*.iws
+*.iml

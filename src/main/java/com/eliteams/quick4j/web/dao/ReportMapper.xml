@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eliteams.quick4j.web.dao.ReportMapper">
+    <resultMap id="BaseResultMap" type="com.eliteams.quick4j.web.model.Report">
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="phone" property="phone" jdbcType="VARCHAR" />
+        <result column="date" property="date" jdbcType="TIMESTAMP" />
+        <result column="shopId" property="shopId" jdbcType="BIGINT" />
+        <result column="carId" property="carId" jdbcType="BIGINT" />
+        <result column="shopPhone" property="shopPhone" jdbcType="VARCHAR" />
+    </resultMap>
+    <!-- 用户登录验证查询 -->
+    <select id="selectByDate" resultMap="BaseResultMap" parameterType="map">
+      select
+        u.id as 'id',
+        ifnull(ud.user_name,u.name) as 'name',
+        u.mobile as 'phone',
+        i.ctime as 'date',
+        i.inform_target_id as 'carId',
+        cm.cyhz_merchant_id as 'shopId',
+        c.linkman_mobile1 as 'shopPhone'
+        from sct_app_ft_inform as i
+        left join sct_user_info_t as u on u.id = i.inform_user_id
+        left join sct_user_detail_info_t as ud on ud.id = u.id
+        left join car_info as c on c.id = i.inform_target_id
+        left join car_info_more as cm on c.id = cm.id
+        where 1 =1
+        and i.inform_target_type = 99
+        and i.ctime between #{from} and #{to}
+        ORDER BY i.ctime desc
+    </select>
+</mapper>

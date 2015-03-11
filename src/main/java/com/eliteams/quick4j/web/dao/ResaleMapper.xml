@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eliteams.quick4j.web.dao.ResaleMapper">
+    <resultMap id="BaseResultMap" type="com.eliteams.quick4j.web.model.Resale">
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="phone" property="phone" jdbcType="VARCHAR" />
+        <result column="originLocation" property="originLocation" jdbcType="VARCHAR" />
+        <result column="resaleLocation" property="resaleLocation" jdbcType="VARCHAR" />
+        <result column="originPrice" property="originPrice" jdbcType="VARCHAR" />
+        <result column="resalePrice" property="resalePrice" jdbcType="VARCHAR" />
+        <result column="date" property="date" jdbcType="TIMESTAMP" />
+    </resultMap>
+    <select id="selectByDate" resultMap="BaseResultMap" parameterType="map">
+        select
+        t.user_id as 'id',
+        ifnull(ud.user_name,u.name) as 'name',
+        u.mobile as 'phone',
+        t.ctime as 'date',
+        c.city as 'originLocation',
+        g.official_name as 'resaleLocation',
+        c.price as 'originPrice',
+        tc.price as 'resalePrice'
+        from sct_app_ft_transmit_car as tc
+        left join sct_app_ft_transmit_car_city as tcc on tcc.transmit_id = tc.id
+        left join car_info as c on c.id = tc.cid
+        left join def_geo_info as g on g.official_code = tcc.city_id and g.category_type = 'simple_province_city'
+        left join sct_app_ft_transmit as t on t.id = tc.id
+        left join sct_user_info_t as u on u.id = t.user_id
+        left join sct_user_detail_info_t as ud on ud.id = u.id
+        where 1 = 1
+        and tc.input_date between #{from} and #{to}
+        order by tc.input_date desc
+    </select>
+</mapper>

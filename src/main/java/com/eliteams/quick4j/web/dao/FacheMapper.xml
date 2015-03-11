@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eliteams.quick4j.web.dao.FacheMapper">
+    <resultMap id="BaseResultMap" type="com.eliteams.quick4j.web.model.Fache">
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="phone" property="phone" jdbcType="VARCHAR" />
+        <result column="date" property="date" jdbcType="TIMESTAMP" />
+        <result column="brand" property="brand" jdbcType="VARCHAR" />
+        <result column="model" property="model" jdbcType="VARCHAR" />
+    </resultMap>
+    <!-- 用户登录验证查询 -->
+    <select id="selectByDate" resultMap="BaseResultMap" parameterType="map">
+        select
+        u.id as 'id' ,
+        ifnull(ud.user_name,u.name) as 'name', u.mobile as 'phone',b.brand as 'brand',
+        -- substring(substring(lo.params,position('\\"brandId\\":\\"' in lo.params)+14),1,position('\\"' in substring(lo.params,position('\\"brandId\\":\\"' in lo.params)+14))-1) as bid,
+        -- substring(substring(lo.params,position('\\"seriesNameId\\":\\"' in lo.params)+19),1,position('\\"' in substring(lo.params,position('\\"seriesNameId\\":\\"' in lo.params)+19))-1) as sid,
+        s.series as 'model',lo.ctime as 'date',lo.params
+        from sct_app_ft_user_browse_trace as lo
+        left join sct_user_info_t as u on u.id = lo.user_id
+        left join sct_user_detail_info_t as ud on ud.id = u.id
+        left join def_brand_series_t as bs on bs.id = substring(substring(lo.params,position('\\"seriesNameId\\":\\"' in lo.params)+19),1,position('\\"' in substring(lo.params,position('\\"seriesNameId\\":\\"' in lo.params)+19))-1)
+        left join def_series_info_t as s on s.id = bs.sid
+        left join def_brand_info_t as b on b.id = substring(substring(lo.params,position('\\"brandId\\":\\"' in lo.params)+14),1,position('\\"' in substring(lo.params,position('\\"brandId\\":\\"' in lo.params)+14))-1)
+        where lo.module = 'csyjpublish' and lo.sub_module = '/publish'
+        and lo.ctime between #{from} and #{to}
+        ORDER BY lo.ctime desc
+    </select>
+</mapper>

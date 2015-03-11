@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eliteams.quick4j.web.dao.ChatMapper">
+    <resultMap id="BaseResultMap" type="com.eliteams.quick4j.web.model.Chat">
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="phone" property="phone" jdbcType="VARCHAR" />
+        <result column="middleId" property="middleId" jdbcType="BIGINT" />
+        <result column="middleName" property="middleName" jdbcType="VARCHAR" />
+        <result column="middlePhone" property="middlePhone" jdbcType="VARCHAR" />
+        <result column="secondId" property="secondId" jdbcType="BIGINT" />
+        <result column="secondName" property="secondName" jdbcType="VARCHAR" />
+        <result column="secondPhone" property="secondPhone" jdbcType="VARCHAR" />
+        <result column="date" property="date" jdbcType="TIMESTAMP" />
+    </resultMap>
+    <!-- 用户登录验证查询 -->
+    <select id="selectByDate" resultMap="BaseResultMap" parameterType="map">
+    select
+u.id as 'id',
+ifnull(ud.user_name,u.name) as 'name',
+u.mobile as 'phone',
+mu.id as 'middleId',
+ifnull(mud.user_name,mu.name) as 'middleName',
+i.direct_mobile as 'middlePhone',
+bisu.id as 'secondId',
+ifnull(bisud.user_name,bisu.name) as 'secondName',
+i.ctime as 'date',
+i.bis_mobile as 'secondPhone'
+from
+sct_app_ft_introduction_2_friend as i
+left join sct_user_info_t as u on u.id = i.user_id
+left join sct_user_detail_info_t as ud on ud.id = u.id
+left join sct_user_info_t as mu on mu.mobile = i.direct_mobile
+left join sct_user_detail_info_t as mud on mud.id = mu.id
+left join sct_user_info_t as bisu on bisu.mobile = i.bis_mobile
+left join sct_user_detail_info_t as bisud on bisud.id = bisu.id
+where i.ctime between #{from} and #{to}
+ORDER BY i.ctime DESC
+    </select>
+</mapper>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eliteams.quick4j.web.dao.XunjiaMapper">
+    <resultMap id="BaseResultMap" type="com.eliteams.quick4j.web.model.Xunjia">
+        <result column="xunJiaId" property="xunJiaId" jdbcType="BIGINT" />
+        <result column="beiXunjiaId" property="beiXunjiaId" jdbcType="BIGINT" />
+        <result column="xunJiaName" property="xunJiaName" jdbcType="VARCHAR" />
+        <result column="beiXunjiaName" property="beiXunjiaName" jdbcType="VARCHAR" />
+        <result column="date" property="date" jdbcType="TIMESTAMP" />
+    </resultMap>
+    <select id="selectByDate" resultMap="BaseResultMap" parameterType="map">
+        select
+        u.id as 'xunJiaId' ,
+        ifnull(ud.user_name,u.name) as 'xunJiaName',
+        ef.enquiry_datetime as 'date',
+        bu.id as 'beiXunjiaId' ,
+        ifnull(bud.user_name,bu.name) as 'beiXunjiaName'
+        from sct_app_ft_enquiry_forward as ef
+        left join sct_app_ft_enquiry as e on e.id = ef.enquiry_id
+        left join sct_user_info_t as u on u.id = e.user_id
+        left join sct_user_detail_info_t as ud on ud.id = u.id
+        left join sct_user_info_t as bu on bu.id = ef.forward_friend_id
+        left join sct_user_detail_info_t as bud on bud.id = bu.id
+        where 1 = 1
+        and ef.forward_friend_id <![CDATA[ <> ]]> e.user_id
+        and ef.enquiry_datetime between #{from} and #{to}
+        ORDER BY ef.enquiry_datetime DESC
+    </select>
+</mapper>
